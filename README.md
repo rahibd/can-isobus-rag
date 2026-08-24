@@ -5,7 +5,7 @@
 ![Offline](https://img.shields.io/badge/inference-100%25%20local-orange)
 
 **At a glance:** two AI approaches (RAG vs. QLoRA fine-tuning) built and
-compared on the same 200+ document technical corpus, running fully
+compared on the same 200+ document technical corpus (**sample 3 added here**), running fully
 offline — no cloud APIs, no data leaving the machine. Built by a PhD
 researcher in agricultural mechatronics applying the same domain expertise
 behind [published ISOBUS communication research](#related-publications)
