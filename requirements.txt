@@ -1,0 +1,6 @@
+sentence-transformers
+chromadb
+requests
+pypdf
+python-docx
+flask
