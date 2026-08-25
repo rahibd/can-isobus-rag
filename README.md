@@ -5,7 +5,7 @@
 ![Offline](https://img.shields.io/badge/inference-100%25%20local-orange)
 
 **At a glance:** two AI approaches (RAG vs. QLoRA fine-tuning) built and
-compared on the same 200+ document technical corpus (**sample 3 added here**), running fully
+compared on the same 200+ document technical corpus, running fully
 offline — no cloud APIs, no data leaving the machine. Built by a PhD
 researcher in agricultural mechatronics applying the same domain expertise
 behind [published ISOBUS communication research](#related-publications)
@@ -79,8 +79,8 @@ retrieve knowledge at question time versus bake it into the model itself?**
               ▼                                    ▼
    ┌─────────────────────┐            ┌─────────────────────────┐
    │   RAG (retrieval)    │            │  Fine-tuning (weights)   │
-   │  query expansion +    │            │  auto-generate QA pairs  │
-   │  hybrid retrieval →   │            │  → QLoRA on Qwen2.5 /    │
+   │  HyDE-style expansion │            │  auto-generate QA pairs  │
+   │  + hybrid retrieval → │            │  → QLoRA on Qwen2.5 /    │
    │  local LLM answer     │            │  Llama-3.1 (Unsloth) →   │
    │  (LM Studio)          │            │  GGUF → back into LM     │
    │                       │            │  Studio                  │
@@ -92,9 +92,10 @@ retrieve knowledge at question time versus bake it into the model itself?**
 **RAG pipeline**
 - Multi-format ingestion (`.txt`, `.pdf`, `.docx`)
 - Local vector search (ChromaDB + sentence-transformers), no cloud embedding API
-- Hybrid retrieval — query expansion (spec-style rephrasing) merged with
-  raw-question search, to hedge against a single retrieval pass missing
-  the right chunk
+- Hybrid retrieval — HyDE-style query expansion (hypothetical document
+  embeddings: rewriting a terse question into fuller, document-style
+  phrasing before embedding it) merged with raw-question search, to hedge
+  against a single retrieval pass missing the right chunk
 - Fully offline generation via a local LLM served through LM Studio
 - Browser chat UI (Flask) and terminal CLI, sharing one core pipeline
 - Rebuild-vs-reuse prompt on startup — skip re-embedding when nothing's changed
@@ -156,14 +157,17 @@ A few choices made deliberately, and why:
   LM Studio instead of a cloud API means the actual content of the
   documents never leaves the machine — a real constraint in industrial
   contexts, not just a cost optimization.
-- **Hybrid retrieval over a single query-expansion pass.** Expanding a
-  short question into fuller, spec-style phrasing before embedding it
-  generally improves match quality — but on a small local model, that
-  expansion step has enough variance that the *same* question could
-  retrieve different chunks on different runs. Merging expanded-query
-  results with raw-query results (deduplicated) hedges against either
-  pass drifting off-topic, at the cost of a slightly larger context window
-  per answer.
+- **Hybrid retrieval over a single query-expansion pass.** This isn't
+  naive, single-pass RAG. Expanding a short question into fuller,
+  spec-style phrasing before embedding it — a HyDE-style approach
+  ([Gao et al., 2022](https://arxiv.org/abs/2212.10496), *Precise
+  Zero-Shot Dense Retrieval without Relevance Labels*) — generally
+  improves match quality over embedding the raw question directly. But on
+  a small local model, that expansion step has enough variance that the
+  *same* question could retrieve different chunks on different runs.
+  Merging expanded-query results with raw-query results (deduplicated)
+  hedges against either pass drifting off-topic, at the cost of a
+  slightly larger context window per answer.
 - **RAG and fine-tuning built side by side, not sequentially.** The
   interesting engineering question isn't "can you build a RAG pipeline"
   — it's knowing which approach fits which situation: RAG for
