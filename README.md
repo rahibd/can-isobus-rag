@@ -1,10 +1,10 @@
-# CAN-RAG: Local RAG + Fine-Tuning for ISOBUS/CAN Documentation
+# CAN-RAG: Local RAG + Fine-Tuning for ISOBUS/CAN
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Offline](https://img.shields.io/badge/inference-100%25%20local-orange)
 
-**At a glance:** two AI approaches (RAG vs. QLoRA fine-tuning) built and
+**At a glance:** Two AI approaches (RAG vs. QLoRA fine-tuning) built and
 compared on the same 200+ document technical corpus, running fully
 offline — no cloud APIs, no data leaving the machine. Built by a PhD
 researcher in agricultural mechatronics applying the same domain expertise
